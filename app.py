@@ -1,14 +1,19 @@
-# app.py
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime
+from pathlib import Path
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-change-this-in-production'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///akesis.db'
+
+# Get the absolute path for database
+BASE_DIR = Path(__file__).resolve().parent
+DB_PATH = BASE_DIR / 'akesis.db'
+
+app.config['SECRET_KEY'] = 'change-this-to-a-random-secret-key-for-production'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -398,11 +403,7 @@ def admin_whychoose_delete(id):
 def admin_contact_info():
     contact = ContactInfo.query.first()
     if not contact:
-        contact = ContactInfo(
-            email="akesiskreation@gmail.com",
-            phone="+233 26 505 2819",
-            shipping_info="We ship worldwide via DHL"
-        )
+        contact = ContactInfo()
         db.session.add(contact)
         db.session.commit()
     
@@ -483,78 +484,81 @@ def contact_submit():
 
 def init_db():
     with app.app_context():
-        # Drop all tables and recreate (use only for development)
-        db.drop_all()
-        db.create_all()
+        if Admin.query.count() == 0:
+            admin = Admin(username='admin')
+            admin.set_password('admin123')
+            db.session.add(admin)
         
-        # Create default admin
-        admin = Admin(username='admin')
-        admin.set_password('admin123')
-        db.session.add(admin)
+        if HeroSection.query.count() == 0:
+            hero = HeroSection()
+            db.session.add(hero)
         
-        # Create default hero section
-        hero = HeroSection()
-        db.session.add(hero)
+        if AboutSection.query.count() == 0:
+            about = AboutSection(
+                content="Samuella Bennie Coffie is the creative mind behind Akesi's Kreation—a multidisciplinary artist, chromotherapist, and lifelong lover of color. Her journey with art began at age six, when she first picked up a crochet hook and discovered the peace that comes from creating with her hands. Today, she combines her artistic background with her knowledge of chromotherapy to design pieces that do more than beautify—they uplift, calm, and inspire."
+            )
+            db.session.add(about)
         
-        # Create default about section
-        about = AboutSection(
-            content="Samuella Bennie Coffie is the creative mind behind Akesi's Kreation—a multidisciplinary artist, chromotherapist, and lifelong lover of color. Her journey with art began at age six, when she first picked up a crochet hook and discovered the peace that comes from creating with her hands. Today, she combines her artistic background with her knowledge of chromotherapy to design pieces that do more than beautify—they uplift, calm, and inspire."
-        )
-        db.session.add(about)
+        if UniqueFeature.query.count() == 0:
+            default_features = [
+                UniqueFeature(icon="fa-heart", title="Art Meets Emotion", description="Every piece is crafted with intention—merging art, color, and therapy to inspire emotional balance and self-expression.", order=1),
+                UniqueFeature(icon="fa-palette", title="Signature Use of Color", description="We treat color as more than visual beauty. Each shade is chosen for its emotional effect, creating designs that calm, uplift, and energize.", order=2),
+                UniqueFeature(icon="fa-hands", title="Handcrafted Excellence", description="Our creations are meticulously made by hand, ensuring precision, texture, and timeless appeal in every detail.", order=3),
+                UniqueFeature(icon="fa-tshirt", title="Wearable Art & Beyond", description="From crochet earrings and fascinators to mixed media paintings and wall art, our work transforms artistry into luxury.", order=4),
+                UniqueFeature(icon="fa-globe-africa", title="Global Aesthetic with African Soul", description="Rooted in African creativity yet inspired by global art and fashion, we bridge cultures through design and emotion.", order=5),
+                UniqueFeature(icon="fa-user", title="Uniqueness as Identity", description="Each piece celebrates individuality—made to remind you that confidence and beauty begin with being authentically yourself.", order=6)
+            ]
+            for feature in default_features:
+                db.session.add(feature)
         
-        # Create default unique features
-        default_features = [
-            UniqueFeature(icon="fa-heart", title="Art Meets Emotion", description="Every piece is crafted with intention—merging art, color, and therapy to inspire emotional balance and self-expression.", order=1),
-            UniqueFeature(icon="fa-palette", title="Signature Use of Color", description="We treat color as more than visual beauty. Each shade is chosen for its emotional effect, creating designs that calm, uplift, and energize.", order=2),
-            UniqueFeature(icon="fa-hands", title="Handcrafted Excellence", description="Our creations are meticulously made by hand, ensuring precision, texture, and timeless appeal in every detail.", order=3),
-            UniqueFeature(icon="fa-tshirt", title="Wearable Art & Beyond", description="From crochet earrings and fascinators to mixed media paintings and wall art, our work transforms artistry into luxury.", order=4),
-            UniqueFeature(icon="fa-globe-africa", title="Global Aesthetic with African Soul", description="Rooted in African creativity yet inspired by global art and fashion, we bridge cultures through design and emotion.", order=5),
-            UniqueFeature(icon="fa-user", title="Uniqueness as Identity", description="Each piece celebrates individuality—made to remind you that confidence and beauty begin with being authentically yourself.", order=6)
-        ]
-        for feature in default_features:
-            db.session.add(feature)
+        if Product.query.count() == 0:
+            default_products = [
+                Product(name="Crochet Earrings", description="Handcrafted earrings that combine traditional techniques with contemporary design.", icon="fa-gem", gradient_from="purple-400", gradient_to="pink-500", order=1),
+                Product(name="Fascinators", description="Elegant headpieces that make a statement at any special occasion.", icon="fa-hat-cowboy", gradient_from="blue-400", gradient_to="teal-500", order=2),
+                Product(name="Mixed Media Art", description="Wall art and paintings that blend various materials and techniques.", icon="fa-paint-brush", gradient_from="yellow-400", gradient_to="orange-500", order=3)
+            ]
+            for product in default_products:
+                db.session.add(product)
         
-        # Create default products
-        default_products = [
-            Product(name="Crochet Earrings", description="Handcrafted earrings that combine traditional techniques with contemporary design.", icon="fa-gem", gradient_from="purple-400", gradient_to="pink-500", order=1),
-            Product(name="Fascinators", description="Elegant headpieces that make a statement at any special occasion.", icon="fa-hat-cowboy", gradient_from="blue-400", gradient_to="teal-500", order=2),
-            Product(name="Mixed Media Art", description="Wall art and paintings that blend various materials and techniques.", icon="fa-paint-brush", gradient_from="yellow-400", gradient_to="orange-500", order=3)
-        ]
-        for product in default_products:
-            db.session.add(product)
+        if JourneyMilestone.query.count() == 0:
+            default_milestones = [
+                JourneyMilestone(year="2011", title="The Spark Ignites", description="A creative journey begins as our founder learns to bead and soon after, to crochet—laying the foundation for a lifelong passion for handcrafted art.", color="purple-700", order=1),
+                JourneyMilestone(year="2020", title="Akesi's Kreation is Born", description="The vision becomes reality. Akesi's Kreation is officially launched, combining traditional techniques with a bold, contemporary aesthetic to create wearable art with meaning.", color="pink-600", order=2),
+                JourneyMilestone(year="2023", title="Therapeutic Artistry Emerges", description="Grounded in chromotherapy, the brand evolves to embrace art as a tool for emotional well-being.", color="blue-600", order=3),
+                JourneyMilestone(year="Today", title="A Purposeful Creative Force", description="Akesi's Kreation continues to grow, uniting art, culture, and wellness to craft pieces that uplift, empower, and inspire.", color="green-600", order=4)
+            ]
+            for milestone in default_milestones:
+                db.session.add(milestone)
         
-        # Create default journey milestones
-        default_milestones = [
-            JourneyMilestone(year="2011", title="The Spark Ignites", description="A creative journey begins as our founder learns to bead and soon after, to crochet—laying the foundation for a lifelong passion for handcrafted art.", color="purple-700", order=1),
-            JourneyMilestone(year="2020", title="Akesi's Kreation is Born", description="The vision becomes reality. Akesi's Kreation is officially launched, combining traditional techniques with a bold, contemporary aesthetic to create wearable art with meaning.", color="pink-600", order=2),
-            JourneyMilestone(year="2023", title="Therapeutic Artistry Emerges", description="Grounded in chromotherapy, the brand evolves to embrace art as a tool for emotional well-being.", color="blue-600", order=3),
-            JourneyMilestone(year="Today", title="A Purposeful Creative Force", description="Akesi's Kreation continues to grow, uniting art, culture, and wellness to craft pieces that uplift, empower, and inspire.", color="green-600", order=4)
-        ]
-        for milestone in default_milestones:
-            db.session.add(milestone)
+        if WhyChooseUs.query.count() == 0:
+            default_items = [
+                WhyChooseUs(icon="fa-hands", title="Handcrafted with Intention", description="Every piece is made by hand, ensuring quality, detail, and uniqueness.", order=1),
+                WhyChooseUs(icon="fa-palette", title="Color as Therapy", description="Our designs are created to inspire, uplift, and balance emotions through thoughtful use of color.", order=2),
+                WhyChooseUs(icon="fa-tshirt", title="Wearable Art", description="From crochet fashion to fascinators and accessories, our creations are designed to be experienced, not just admired.", order=3),
+                WhyChooseUs(icon="fa-user-graduate", title="Creative Expertise", description="Led by Samuella Coffie, a multidisciplinary artist and chromotherapist with years of experience.", order=4),
+                WhyChooseUs(icon="fa-globe", title="Global Inspiration, Personal Touch", description="While rooted in African creativity, our designs are influenced by global trends and aesthetics.", order=5)
+            ]
+            for item in default_items:
+                db.session.add(item)
         
-        # Create default why choose us items
-        default_items = [
-            WhyChooseUs(icon="fa-hands", title="Handcrafted with Intention", description="Every piece is made by hand, ensuring quality, detail, and uniqueness.", order=1),
-            WhyChooseUs(icon="fa-palette", title="Color as Therapy", description="Our designs are created to inspire, uplift, and balance emotions through thoughtful use of color.", order=2),
-            WhyChooseUs(icon="fa-tshirt", title="Wearable Art", description="From crochet fashion to fascinators and accessories, our creations are designed to be experienced, not just admired.", order=3),
-            WhyChooseUs(icon="fa-user-graduate", title="Creative Expertise", description="Led by Samuella Coffie, a multidisciplinary artist and chromotherapist with years of experience.", order=4),
-            WhyChooseUs(icon="fa-globe", title="Global Inspiration, Personal Touch", description="While rooted in African creativity, our designs are influenced by global trends and aesthetics.", order=5)
-        ]
-        for item in default_items:
-            db.session.add(item)
+        if ContactInfo.query.count() == 0:
+            contact = ContactInfo()
+            db.session.add(contact)
         
-        # Create default contact info
-        contact = ContactInfo()
-        db.session.add(contact)
-        
-        # Create default site settings
-        settings = SiteSetting()
-        db.session.add(settings)
+        if SiteSetting.query.count() == 0:
+            settings = SiteSetting()
+            db.session.add(settings)
         
         db.session.commit()
         print("Database initialized with default data!")
 
-if __name__ == '__main__':
+# Create database and tables
+with app.app_context():
+    db.create_all()
     init_db()
-    app.run(debug=True, host='0.0.0.0', port=5000)
+
+# This is needed for PythonAnywhere
+application = app
+
+if __name__ == '__main__':
+    app.run(debug=False)
