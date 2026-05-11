@@ -1,0 +1,34 @@
+<!-- templates/admin/settings.html -->
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold">Site Settings</h1>
+</div>
+
+<div class="bg-white rounded-xl shadow-md p-6">
+    <form method="POST">
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Site Name</label>
+            <input type="text" name="site_name" value="{{ settings.site_name }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Tagline</label>
+            <input type="text" name="tagline" value="{{ settings.tagline }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Footer Text</label>
+            <input type="text" name="footer_text" value="{{ settings.footer_text }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        
+        <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors">Save Changes</button>
+    </form>
+</div>
+
+<div class="mt-8 bg-yellow-50 rounded-xl p-6">
+    <h3 class="font-bold text-yellow-800 mb-2">⚠️ Default Admin Credentials</h3>
+    <p class="text-yellow-700">Username: admin | Password: admin123</p>
+    <p class="text-yellow-700 text-sm mt-2">To change admin password, you'll need to directly update the database or create a separate admin management feature.</p>
+</div>
+{% endblock %}

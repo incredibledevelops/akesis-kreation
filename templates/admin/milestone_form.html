@@ -1,0 +1,73 @@
+<!-- templates/admin/milestone_form.html -->
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold">{{ 'Edit Milestone' if milestone else 'Add Milestone' }}</h1>
+    <a href="{{ url_for('admin_milestones') }}" class="text-gray-600 hover:text-gray-800">← Back</a>
+</div>
+
+<div class="bg-white rounded-xl shadow-md p-6">
+    <form method="POST">
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Year</label>
+            <input type="text" name="year" value="{{ milestone.year if milestone else '' }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <p class="text-sm text-gray-500 mt-1">Example: 2011, 2020, 2023, Today</p>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Title</label>
+            <input type="text" name="title" value="{{ milestone.title if milestone else '' }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Description</label>
+            <textarea name="description" rows="3" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">{{ milestone.description if milestone else '' }}</textarea>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Color Theme</label>
+            <select name="color" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                <option value="purple-700" {% if milestone and milestone.color == 'purple-700' %}selected{% endif %}>Purple</option>
+                <option value="pink-600" {% if milestone and milestone.color == 'pink-600' %}selected{% endif %}>Pink</option>
+                <option value="blue-600" {% if milestone and milestone.color == 'blue-600' %}selected{% endif %}>Blue</option>
+                <option value="green-600" {% if milestone and milestone.color == 'green-600' %}selected{% endif %}>Green</option>
+                <option value="orange-600" {% if milestone and milestone.color == 'orange-600' %}selected{% endif %}>Orange</option>
+                <option value="red-600" {% if milestone and milestone.color == 'red-600' %}selected{% endif %}>Red</option>
+                <option value="indigo-600" {% if milestone and milestone.color == 'indigo-600' %}selected{% endif %}>Indigo</option>
+                <option value="teal-600" {% if milestone and milestone.color == 'teal-600' %}selected{% endif %}>Teal</option>
+            </select>
+            <p class="text-sm text-gray-500 mt-1">This color will be used for the year badge and title text</p>
+        </div>
+        
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Display Order</label>
+            <input type="number" name="order" value="{{ milestone.order if milestone else 0 }}" class="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <p class="text-sm text-gray-500 mt-1">Lower numbers appear first</p>
+        </div>
+        
+        <div class="flex space-x-3">
+            <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors">Save Milestone</button>
+            <a href="{{ url_for('admin_milestones') }}" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition-colors">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<!-- Preview Section -->
+<div class="mt-8 bg-gray-50 rounded-xl p-6">
+    <h3 class="font-bold text-lg mb-4">Preview:</h3>
+    <div class="max-w-lg">
+        <div class="flex flex-col md:flex-row mb-4">
+            <div class="md:w-1/3 mb-4 md:mb-0">
+                <div class="bg-purple-700 text-white p-4 rounded-lg text-center">
+                    <h3 class="text-xl font-bold">{{ milestone.year if milestone else '2024' }}</h3>
+                </div>
+            </div>
+            <div class="md:w-2/3 bg-white p-6 rounded-lg shadow-lg">
+                <h4 class="text-xl font-bold mb-2 text-purple-700">{{ milestone.title if milestone else 'Milestone Title' }}</h4>
+                <p class="text-gray-600">{{ milestone.description if milestone else 'This is how your milestone will appear on the website. The color you selected will be applied to the year badge and the title text.' }}</p>
+            </div>
+        </div>
+    </div>
+    <p class="text-sm text-gray-500 mt-4">Note: The color in preview shows purple as example. Your selected color will appear on the actual site.</p>
+</div>
+{% endblock %}

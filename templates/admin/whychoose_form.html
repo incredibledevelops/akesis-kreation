@@ -1,0 +1,35 @@
+<!-- templates/admin/whychoose_form.html -->
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold">{{ 'Edit Item' if item else 'Add Item' }}</h1>
+    <a href="{{ url_for('admin_whychoose') }}" class="text-gray-600 hover:text-gray-800">← Back</a>
+</div>
+
+<div class="bg-white rounded-xl shadow-md p-6">
+    <form method="POST">
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Icon (Font Awesome class)</label>
+            <input type="text" name="icon" value="{{ item.icon if item else 'fa-heart' }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <p class="text-sm text-gray-500 mt-1">Examples: fa-hands, fa-palette, fa-tshirt, fa-user-graduate, fa-globe</p>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Title</label>
+            <input type="text" name="title" value="{{ item.title if item else '' }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Description</label>
+            <textarea name="description" rows="3" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">{{ item.description if item else '' }}</textarea>
+        </div>
+        
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Display Order</label>
+            <input type="number" name="order" value="{{ item.order if item else 0 }}" class="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        
+        <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors">Save Item</button>
+    </form>
+</div>
+{% endblock %}

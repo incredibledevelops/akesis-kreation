@@ -1,0 +1,74 @@
+<!-- templates/admin/product_form.html -->
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold">{{ 'Edit Product' if product else 'Add Product' }}</h1>
+    <a href="{{ url_for('admin_products') }}" class="text-gray-600 hover:text-gray-800">← Back</a>
+</div>
+
+<div class="bg-white rounded-xl shadow-md p-6">
+    <form method="POST">
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Name</label>
+            <input type="text" name="name" value="{{ product.name if product else '' }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Description</label>
+            <textarea name="description" rows="3" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">{{ product.description if product else '' }}</textarea>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Icon (Font Awesome class)</label>
+            <input type="text" name="icon" value="{{ product.icon if product else 'fa-gem' }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <p class="text-sm text-gray-500 mt-1">Examples: fa-gem, fa-hat-cowboy, fa-paint-brush, fa-tshirt</p>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">Gradient From (Tailwind color)</label>
+                <select name="gradient_from" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <option value="purple-400" {% if product and product.gradient_from == 'purple-400' %}selected{% endif %}>Purple</option>
+                    <option value="blue-400" {% if product and product.gradient_from == 'blue-400' %}selected{% endif %}>Blue</option>
+                    <option value="pink-400" {% if product and product.gradient_from == 'pink-400' %}selected{% endif %}>Pink</option>
+                    <option value="green-400" {% if product and product.gradient_from == 'green-400' %}selected{% endif %}>Green</option>
+                    <option value="yellow-400" {% if product and product.gradient_from == 'yellow-400' %}selected{% endif %}>Yellow</option>
+                    <option value="red-400" {% if product and product.gradient_from == 'red-400' %}selected{% endif %}>Red</option>
+                    <option value="indigo-400" {% if product and product.gradient_from == 'indigo-400' %}selected{% endif %}>Indigo</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-medium mb-2">Gradient To (Tailwind color)</label>
+                <select name="gradient_to" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <option value="pink-500" {% if product and product.gradient_to == 'pink-500' %}selected{% endif %}>Pink</option>
+                    <option value="teal-500" {% if product and product.gradient_to == 'teal-500' %}selected{% endif %}>Teal</option>
+                    <option value="orange-500" {% if product and product.gradient_to == 'orange-500' %}selected{% endif %}>Orange</option>
+                    <option value="purple-500" {% if product and product.gradient_to == 'purple-500' %}selected{% endif %}>Purple</option>
+                    <option value="blue-500" {% if product and product.gradient_to == 'blue-500' %}selected{% endif %}>Blue</option>
+                    <option value="red-500" {% if product and product.gradient_to == 'red-500' %}selected{% endif %}>Red</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Display Order</label>
+            <input type="number" name="order" value="{{ product.order if product else 0 }}" class="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        
+        <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors">Save Product</button>
+    </form>
+</div>
+
+<div class="mt-8 bg-gray-50 rounded-xl p-6">
+    <h3 class="font-bold mb-2">Preview:</h3>
+    <div class="bg-white rounded-xl overflow-hidden shadow-md max-w-sm">
+        <div class="h-32 bg-gradient-to-r from-{{ product.gradient_from if product else 'purple-400' }} to-{{ product.gradient_to if product else 'pink-500' }} flex items-center justify-center">
+            <i class="fas {{ product.icon if product else 'fa-gem' }} text-white text-4xl"></i>
+        </div>
+        <div class="p-4">
+            <h4 class="font-bold">{{ product.name if product else 'Product Name' }}</h4>
+            <p class="text-gray-600 text-sm mt-1">{{ product.description if product else 'Product description goes here.' }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

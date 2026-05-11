@@ -1,0 +1,35 @@
+<!-- templates/admin/feature_form.html -->
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold">{{ 'Edit Feature' if feature else 'Add Feature' }}</h1>
+    <a href="{{ url_for('admin_features') }}" class="text-gray-600 hover:text-gray-800">← Back</a>
+</div>
+
+<div class="bg-white rounded-xl shadow-md p-6">
+    <form method="POST">
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Icon (Font Awesome class)</label>
+            <input type="text" name="icon" value="{{ feature.icon if feature else 'fa-heart' }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <p class="text-sm text-gray-500 mt-1">Examples: fa-heart, fa-palette, fa-hands, fa-tshirt, fa-globe-africa, fa-user</p>
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Title</label>
+            <input type="text" name="title" value="{{ feature.title if feature else '' }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">Description</label>
+            <textarea name="description" rows="3" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">{{ feature.description if feature else '' }}</textarea>
+        </div>
+        
+        <div class="mb-6">
+            <label class="block text-gray-700 font-medium mb-2">Display Order</label>
+            <input type="number" name="order" value="{{ feature.order if feature else 0 }}" class="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+        </div>
+        
+        <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors">Save Feature</button>
+    </form>
+</div>
+{% endblock %}
